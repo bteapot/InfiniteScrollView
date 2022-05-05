@@ -514,6 +514,9 @@ public final class InfiniteScrollView: UIScrollView {
             return
         }
         
+        // останавливаем текущую анимацию
+        self.setContentOffset(self.contentOffset, animated: false)
+        
         // метрики
         let boundsLon: CGFloat =
             self.direction.lenLon(of: self.bounds)
@@ -625,6 +628,38 @@ public final class InfiniteScrollView: UIScrollView {
                 return target
             }()
         
+        // длина контента
+        let contentLon: CGFloat =
+            self.direction.lon(of: self.contentSize)
+        
+        // целевой элемент слишком близко к началу?
+        if target.minLon < boundsLon {
+            // двигаем видимую область
+            self.bounds =
+                self.direction.offset(
+                    rect: self.bounds,
+                    lon:  boundsLon,
+                    lat:  0
+                )
+            
+            // двигаем элементы
+            self.offset(items: self.items, by: boundsLon)
+        }
+        
+        // целевой элемент слишком близко к концу?
+        if target.maxLon + boundsLon > contentLon {
+            // двигаем видимую область
+            self.bounds =
+                self.direction.offset(
+                    rect: self.bounds,
+                    lon:  -boundsLon,
+                    lat:  0
+                )
+            
+            // двигаем элементы
+            self.offset(items: self.items, by: -boundsLon)
+        }
+        
         // текущее начало bounds
         let boundsMinLon: CGFloat =
             self.direction.minLon(of: self.bounds)
@@ -644,9 +679,6 @@ public final class InfiniteScrollView: UIScrollView {
                 lon:  target.minLon - boundsMinLon - insetsStartLon - (insettedLon - target.lenLon) / 2,
                 lat:  0
             )
-        
-        // останавливаем текущую анимацию
-        self.setContentOffset(self.contentOffset, animated: false)
         
         // отмечаем, что при вёрстке элементы убирать не надо
         self.scrolling += 1
