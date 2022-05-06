@@ -241,7 +241,7 @@ public final class InfiniteScrollView: UIScrollView {
             self.bounds =
                 self.direction.offset(
                     rect: self.bounds,
-                    lon:  (minLon / lenLon).rounded(.toNearestOrAwayFromZero) * lenLon,
+                    lon:  (minLon / lenLon).rounded(.toNearestOrAwayFromZero) * lenLon - minLon,
                     lat:  0
                 )
             
